@@ -1,8 +1,7 @@
 version: '3'
 services:
   synapse_clear_net:
-    build ./synapse
-    image: start9/synapse:v1.47.1
+    build: ./synapse
     restart: unless-stopped
     environment:
       - https_proxy=privoxy:8118
