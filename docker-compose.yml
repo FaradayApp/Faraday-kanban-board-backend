@@ -1,0 +1,26 @@
+version: '3'
+services:
+  synapse_clear_net:
+    build ./synapse
+    image: start9/synapse:v1.47.1
+    restart: unless-stopped
+    environment:
+      - https_proxy=privoxy:8118
+    volumes:
+      - ./synapse-data:/data
+    depends_on:
+      - tor
+      - privoxy
+    ports:
+      - 8008:8008/tcp
+    logging:
+        driver: journald
+  tor:
+    image: sirboops/tor
+    restart: unless-stopped
+
+  privoxy:
+    image: sirboops/privoxy
+    restart: unless-stopped
+    volumes:
+      - ./priv-config:/opt/config
