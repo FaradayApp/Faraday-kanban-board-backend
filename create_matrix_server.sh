@@ -7,10 +7,6 @@ if [ "$(whoami)" != "root" ]; then
 	1>&2 echo Must run as root
 	exit 1
 fi
-if [ "$(lsb_release -is)" != "Ubuntu" ] || [ "$(lsb_release -rs)" != "20.04" ]; then
-	1>&2 echo This script is built for Ubuntu 20.04. It will likely not work on your system.
-	exit 1
-fi
 
 read -p "Domain name: "
 DOMAIN=$REPLY
