@@ -1,0 +1,60 @@
+version: "3.7"
+
+networks:
+  shildi_chat_network:
+    name: ${PROJECT_NAME}_network
+
+services:
+  db:
+    image: postgres:14.5-alpine
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    container_name: ${PROJECT_NAME}-db
+    networks:
+      - ${PROJECT_NAME}_network
+    ports:
+      - "5432"
+
+  wsgi:
+    build:
+      context: .
+      dockerfile: Docker.wsgi.dockerfile
+    container_name: ${PROJECT_NAME}-wsgi
+    working_dir: /${MAIN_DIR}/
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./src/:/${MAIN_DIR}/
+      - ${STATIC_PATH}:/static
+      - ${MEDIA_PATH}:/media
+      - ${LOG_PATH}:/logs
+    depends_on:
+      - db
+    ports:
+      - "8344:8344"
+    networks:
+      - ${PROJECT_NAME}_network
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Docker.nginx.dockerfile
+    ports:
+      - "6777:6777"
+    container_name: ${PROJECT_NAME}-nginx
+    volumes:
+      - ${STATIC_PATH}:/static
+      - ${MEDIA_PATH}:/media
+    depends_on:
+      - wsgi
+    networks:
+      - ${PROJECT_NAME}_network
+
+volumes:
+  postgresql_data:
+    name: postgresql_data
