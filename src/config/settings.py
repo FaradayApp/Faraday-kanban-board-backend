@@ -9,6 +9,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 ALLOWED_HOSTS = ['shildi_chat.sixhands.co', '*']
 
+DEBUG = True
 
 # Application definition
 
@@ -21,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -87,11 +89,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'users.backends.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
+    'DEFAULT_PERMISSIONS_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    ]
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 LANGUAGE_CODE = 'en-us'
@@ -109,3 +112,10 @@ MEDIA_URL = os.environ.get('MEDIA_URL')
 MEDIA_ROOT = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API Documentation',
+    'DESCRIPTION': 'API documentation',
+    'VERSION': '1.0.0',
+    'SCHEMA_PATH_PREFIX': '/api/schema',
+}
