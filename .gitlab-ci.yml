@@ -12,6 +12,7 @@ build:
   tags:
     - shildichat_backend_runner
   script:
+    - cp ../.env .env
     - docker-compose -p shildichat_backend build
 
 deploy:
@@ -21,4 +22,5 @@ deploy:
   tags:
     - shildichat_backend_runner
   script:
+    - cp ../.env .env
     - docker-compose -p shildichat_backend up -d
