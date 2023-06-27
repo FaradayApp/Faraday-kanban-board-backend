@@ -10,7 +10,7 @@ build:
   only:
     - backend
   tags:
-    - shildichat_backend_tag
+    - shildichat_backend_runner
   script:
     - docker-compose -p shildichat_backend build
 
@@ -19,6 +19,6 @@ deploy:
   only:
     - backend
   tags:
-    - shildichat_backend_tag
+    - shildichat_backend_runner
   script:
     - docker-compose -p shildichat_backend up -d
