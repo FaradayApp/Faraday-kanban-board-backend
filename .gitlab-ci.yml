@@ -1,0 +1,24 @@
+variables:
+  GIT_CLONE_PATH: $CI_BUILDS_DIR/backend
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  only:
+    - dev
+  tags:
+    - shildichat_backend_tag
+  script:
+    - docker-compose -p shildichat_backend build
+
+deploy:
+  stage: deploy
+  only:
+    - dev
+  tags:
+    - shildichat_backend_tag
+  script:
+    - docker-compose -p shildichat_backend up -d
