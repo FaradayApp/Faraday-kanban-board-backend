@@ -12,9 +12,9 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampModel):
         unique=True,
         max_length=33,
     )
-    avatar = models.ImageField("avatar", upload_to='profiles_photos/main_photos', blank=True)
-    first_name = models.CharField("first name", max_length=32, blank=True)
-    last_name = models.CharField("last name", max_length=32, blank=True)
+    avatar = models.ImageField("avatar", upload_to='profiles_photos/main_photos', blank=True, null=True)
+    first_name = models.CharField("first name", max_length=32, blank=True, null=True)
+    last_name = models.CharField("last name", max_length=32, blank=True, null=True)
     is_superuser = models.BooleanField("superuser", default=False)
 
     USERNAME_FIELD = 'username'
