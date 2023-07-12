@@ -20,3 +20,9 @@ class UserRepoImpl(UserRepo):
             last_name=user_data.last_name,
             avatar=user_data.avatar
         )
+    
+    def user_exists(self, **kwargs) -> bool:
+        return User.objects.filter(**kwargs).exists()
+
+    def get_by_username(self, username: str) -> User:
+        return User.objects.get(username=username)
