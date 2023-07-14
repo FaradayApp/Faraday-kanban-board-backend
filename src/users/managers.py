@@ -5,11 +5,14 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, **extra_fields):
+    def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError('The username must be set')
         user = self.model(username=username, **extra_fields)
-        user.set_password(self.generate_random_password)
+        if password:
+            user.set_password(password)
+        else:
+            user.set_password(self.generate_random_password)
         user.save()
         return user
 

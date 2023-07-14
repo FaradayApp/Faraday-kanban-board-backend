@@ -19,6 +19,11 @@ class LoginUserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=33)
 
 
+class LoginAdminSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+
 class TokenSerializer(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()

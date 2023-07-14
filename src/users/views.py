@@ -38,7 +38,7 @@ class RegistrationUserAPI(APIView):
         return Response(status=status.HTTP_201_CREATED, data=serializers.TokenSerializer(tokens).data)
 
 
-class LoginUserAPI(APIView):
+class LoginUserAPI(APIView):  # TODO Schildi login
     permission_classes = (AllowAny,)
     authentication_classes = []
 
@@ -56,6 +56,29 @@ class LoginUserAPI(APIView):
 
         tokens = service(username=serializer.validated_data.get('username'))
 
+        return Response(serializers.TokenSerializer(tokens).data)
+
+
+class LoginAdminAPI(APIView):
+    permission_classes = (AllowAny,)
+    authentication_classes = []
+
+    @extend_schema(
+        request=serializers.LoginAdminSerializer,
+        responses={status.HTTP_200_OK: serializers.TokenSerializer}
+    )
+    def post(
+            self,
+            request, 
+            service: LoginUserCommand = Provide[Container.login_user],
+            ):
+        serializer = serializers.LoginAdminSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        tokens = service.login_admin_user(
+            username=serializer.validated_data.get('username'),
+            password=serializer.validated_data.get('password')
+        )
         return Response(serializers.TokenSerializer(tokens).data)
 
 

@@ -3,12 +3,13 @@ from rest_framework.views import exception_handler
 from typing import Optional
 
 
-class CustomException(Exception):
-    _status = status.HTTP_400_BAD_REQUEST
+class CustomException(exceptions.APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
     _message = ""
 
     def __init__(self, message: Optional[str] = None):
         self.message = message if message else self._message
+        self.detail = self.message
 
     def get_data(self):
         return {"detail": self.message}
@@ -16,6 +17,14 @@ class CustomException(Exception):
     @classmethod
     def get_status(cls):
         return cls._status
+    
+
+class Custom400Exception(CustomException):
+    status_code = status.HTTP_400_BAD_REQUEST
+
+
+class Custom404Exception(CustomException):
+    status_code = status.HTTP_404_NOT_FOUND
 
 
 def custom_exception_handler(exc, context):
