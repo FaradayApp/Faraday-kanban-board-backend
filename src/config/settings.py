@@ -99,7 +99,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler'
+    'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler',
 }
 
 LANGUAGE_CODE = 'en-us'
@@ -119,8 +119,12 @@ MEDIA_ROOT = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'API Documentation',
-    'DESCRIPTION': 'API documentation',
+    'TITLE': 'Shildi Chat API',
+    'DESCRIPTION': 'Тут можно добавить описание',
     'VERSION': '1.0.0',
-    'SCHEMA_PATH_PREFIX': '/api/schema',
+    'DEFAULT_GENERATOR_CLASS': 'drf_spectacular.generators.SchemaGenerator',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'EXTENSIONS': [
+        'users.backends.JWTSchema',
+    ],
 }

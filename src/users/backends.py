@@ -1,8 +1,10 @@
 import jwt
 from rest_framework import authentication, exceptions
+from django.contrib.auth import get_user_model
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
+from drf_spectacular.plumbing import build_bearer_security_scheme_object
 
 from config import settings
-from django.contrib.auth import get_user_model
 
 
 User = get_user_model()
@@ -44,3 +46,17 @@ class JWTAuthentication(authentication.BaseAuthentication):
 
         user, token = authenticate_credentials(token)
         return user, token
+
+
+class JWTSchema(OpenApiAuthenticationExtension):
+    target_class = 'users.backends.JWTAuthentication'
+    name = 'jwtAuth'
+    match_subclasses = True
+    priority = -1
+
+    def get_security_definition(self, auto_schema):
+        return build_bearer_security_scheme_object(
+            header_name='Authorization',
+            token_prefix='Bearer',
+            bearer_format='JWT'
+        )
