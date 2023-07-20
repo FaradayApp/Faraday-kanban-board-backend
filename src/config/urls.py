@@ -23,6 +23,7 @@ from config import settings
 
 urls = [
     path('', include(('users.urls', 'users'))),
+    path('board/', include(('kanban_board.urls', 'kanban_board'))),
 ]
 
 urlpatterns = [
