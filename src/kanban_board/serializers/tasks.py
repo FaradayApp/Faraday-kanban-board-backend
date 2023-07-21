@@ -47,3 +47,17 @@ class TaskSerializer(serializers.ModelSerializer):  # TODO comments and users
             'performers',
             'description',
         )
+
+
+class PreviewTaskSerializer(serializers.ModelSerializer):  # TODO comments and users
+
+    class Meta:
+        model = Task
+        fields = (
+            'id',
+            'title',
+            'expiration_date',
+            'status',
+            'priority',
+            'performers',
+        )

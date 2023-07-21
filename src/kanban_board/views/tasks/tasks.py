@@ -4,7 +4,7 @@ from dependency_injector.wiring import Provide, inject
 from drf_spectacular.utils import extend_schema
 
 from di import Container
-from kanban_board.serializers.tasks import CreateTaskSerializer, EditTaskSerializer, TaskSerializer
+from kanban_board.serializers.tasks import CreateTaskSerializer, EditTaskSerializer, TaskSerializer, PreviewTaskSerializer
 from kanban_board.services.board.repo import KanbanBoardRepo
 from kanban_board.services.tasks.create_task import CreateTaskCommand
 from kanban_board.services.tasks.edit_task import EditTaskCommand
@@ -17,8 +17,8 @@ from utils import pagination
 class TasksViewSet(
     CustomCreateModelMixin,
     CustomUpdateModelMixin,
-    # mixins.ListModelMixin,
-    # mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     GenericViewSet
 ):
     pagination_class = pagination.DefaultPagination
@@ -30,16 +30,16 @@ class TasksViewSet(
             ):
         board = board_repo.get_board_by_id(id=self.kwargs.get('board_id'))
         board_repo.check_user_in_board(board=board, user=self.request.user)
-        return repo.all()
+        return repo.all(board=board)
 
     def get_serializer_class(self):
         if self.action == 'create':
             return CreateTaskSerializer
         elif self.action in ('update', 'partial_update'):
             return EditTaskSerializer
-        # elif self.action == 'list':
-        #     return PreviewTaskSerializer
-        # return TaskSerializer
+        elif self.action == 'list':
+            return PreviewTaskSerializer
+        return TaskSerializer
 
     @extend_schema(
         request=CreateTaskSerializer,

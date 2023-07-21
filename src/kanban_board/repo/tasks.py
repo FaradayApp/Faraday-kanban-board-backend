@@ -11,8 +11,8 @@ User = get_user_model()
 
 class TaskRepoImpl(TaskRepo):
 
-    def all(self) -> QuerySet[Task]:
-        return self.qs.order_by('id')
+    def all(self, board: KanbanBoard) -> QuerySet[Task]:
+        return self.qs.filter(board=board).order_by('id')
     
     def create(self, user: User, board: KanbanBoard, task_data: CreateTaskEntry) -> Task:
         return Task.objects.create(
