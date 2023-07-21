@@ -27,3 +27,9 @@ class TaskRepoImpl(TaskRepo):
 
     def set_performers(self, task: Task, performers: QuerySet[User]) -> None:
         task.performers.set(performers)
+    
+    def get_task_by_id(self, id: int) -> Task:
+        return self.qs.get(id=id)
+
+    def update(self, task: Task, task_data: dict) -> None:
+        self.qs.filter(id=task.id).update(**task_data)

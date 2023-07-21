@@ -25,3 +25,6 @@ class KanbanBoardRepo(ABC):
 
     @abstractmethod
     def add_user_to_board(self, board: KanbanBoard, user: User) -> None: ...
+
+    @abstractmethod
+    def check_user_in_board(self, board: KanbanBoard, user: User) -> None: ...

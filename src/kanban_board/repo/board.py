@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from kanban_board.models import KanbanBoard
 from kanban_board.services.board.entries import CreateKanbanBoardEntry
 from kanban_board.services.board.repo import KanbanBoardRepo
+from utils import exceptions
 
 
 
@@ -26,3 +27,7 @@ class KanbanBoardRepoImpl(KanbanBoardRepo):
 
     def add_user_to_board(self, board: KanbanBoard, user: User) -> None:
         board.users.add(user)
+    
+    def check_user_in_board(self, board: KanbanBoard, user: User) -> None:
+        if not user in board.users.all():
+            raise exceptions.CustomException('Permissions denied')

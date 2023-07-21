@@ -4,8 +4,10 @@ from dependency_injector.wiring import Provide, inject
 from drf_spectacular.utils import extend_schema
 
 from di import Container
-from kanban_board.serializers.tasks import CreateTaskSerializer, TaskSerializer
+from kanban_board.serializers.tasks import CreateTaskSerializer, EditTaskSerializer, TaskSerializer
+from kanban_board.services.board.repo import KanbanBoardRepo
 from kanban_board.services.tasks.create_task import CreateTaskCommand
+from kanban_board.services.tasks.edit_task import EditTaskCommand
 from kanban_board.services.tasks.repo import TaskRepo
 
 from utils.mixins import CustomCreateModelMixin, CustomUpdateModelMixin
@@ -14,21 +16,27 @@ from utils import pagination
 
 class TasksViewSet(
     CustomCreateModelMixin,
-    # CustomUpdateModelMixin,
+    CustomUpdateModelMixin,
     # mixins.ListModelMixin,
     # mixins.RetrieveModelMixin,
     GenericViewSet
 ):
     pagination_class = pagination.DefaultPagination
 
-    def get_queryset(self, repo: TaskRepo = Provide[Container.task_repo]):
+    def get_queryset(
+            self,
+            repo: TaskRepo = Provide[Container.task_repo],
+            board_repo: KanbanBoardRepo = Provide[Container.board_repo],
+            ):
+        board = board_repo.get_board_by_id(id=self.kwargs.get('board_id'))
+        board_repo.check_user_in_board(board=board, user=self.request.user)
         return repo.all()
 
     def get_serializer_class(self):
         if self.action == 'create':
             return CreateTaskSerializer
-        # elif self.action in ('update', 'partial_update'):
-        #     return EditTaskSerializer
+        elif self.action in ('update', 'partial_update'):
+            return EditTaskSerializer
         # elif self.action == 'list':
         #     return PreviewTaskSerializer
         # return TaskSerializer
@@ -53,23 +61,25 @@ class TasksViewSet(
         )
         return TaskSerializer(task, many=False, context={'request': self.request})
 
-    # @extend_schema(
-    #     request=EditTaskSerializer,
-    #     responses={status.HTTP_200_OK: TaskSerializer}
-    # )
-    # def update(self, request, *args, **kwargs):
-    #     return super().update(request, *args, **kwargs)
+    @extend_schema(
+        request=EditTaskSerializer,
+        responses={status.HTTP_200_OK: TaskSerializer}
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
-    # @inject
-    # def perform_update(
-    #     self,
-    #     serializer: EditTaskSerializer,
-    #     service: EditTaskCommand = Provide[Container.edit_task]
-    # ):
-    #     task = service(
-        #     user=self.request.user,
-        #     board_id=self.kwargs.get('board_id'),
-        #     task_data=serializer.to_entry()
-        # )
+    @inject
+    def perform_update(
+        self,
+        serializer: EditTaskSerializer,
+        service: EditTaskCommand = Provide[Container.edit_task]
+    ):
+
+        task = service(
+            user=self.request.user,
+            task=serializer.instance,
+            board_id=self.kwargs.get('board_id'),
+            task_data=serializer.to_entry()
+        )
         
-    #     return serializers.TaskSerializer(post, many=False, context={'request': self.request})
+        return TaskSerializer(task, many=False, context={'request': self.request})
