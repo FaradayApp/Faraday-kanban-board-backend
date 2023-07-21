@@ -10,4 +10,5 @@ class KanbanBoardConfig(AppConfig):
         container = get_di_container()
         container.wire(modules=[
             ".views.board.board",
+            ".views.tasks.tasks",
         ])

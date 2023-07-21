@@ -30,7 +30,7 @@ class Task(models.Model):
     staging_date = models.DateField(auto_now_add=True)
     expiration_date = models.DateField()
     producer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='produced_tasks')
-    performer = models.ManyToManyField(User, related_name='tasks')
+    performers = models.ManyToManyField(User, related_name='tasks')
     status = models.IntegerField(
         choices=TaskStatusTypes.choices,
         default=TaskStatusTypes.TO_DO

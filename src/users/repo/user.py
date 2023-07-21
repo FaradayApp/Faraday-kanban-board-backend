@@ -1,3 +1,4 @@
+from typing import List
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
@@ -26,3 +27,6 @@ class UserRepoImpl(UserRepo):
 
     def get_by_username(self, username: str) -> User:
         return User.objects.get(username=username)
+
+    def get_users_by_ids(self, ids: List[int]) -> QuerySet[User]:
+        return self.qs.filter(id__in=ids)

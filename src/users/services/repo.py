@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import List, Optional
 
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
@@ -25,6 +25,9 @@ class UserRepo(ABC):
 
     @abstractmethod
     def get_by_username(self, username: str) -> User: ...
+
+    @abstractmethod
+    def get_users_by_ids(self, ids: List[int]) -> QuerySet[User]: ...
 
 
 class TokenRepo(ABC):
