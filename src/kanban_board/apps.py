@@ -8,5 +8,6 @@ class KanbanBoardConfig(AppConfig):
     def ready(self):
         from di import get_di_container
         container = get_di_container()
-        # container.wire(modules=[  # TODO ADD VIEWS
-        # ])
+        container.wire(modules=[
+            ".views.board.board",
+        ])

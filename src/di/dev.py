@@ -1,5 +1,8 @@
 from dependency_injector import containers, providers
 
+from kanban_board.repo.board import KanbanBoardRepoImpl
+from kanban_board.services.board.create_board import CreateKanbanBoardCommandImpl
+
 from users.repo.token import TokenRepoImpl
 from users.repo.user import UserRepoImpl
 from users.services.user.create_user import CreateUserCommandImpl
@@ -24,4 +27,12 @@ class Container(containers.DeclarativeContainer):
         LoginUserCommandImpl,
         repo=user_repo,
         tokens_service=tokens_service
+    )
+
+    # board
+    board_repo = providers.Singleton(KanbanBoardRepoImpl)
+
+    create_board = providers.Singleton(
+        CreateKanbanBoardCommandImpl,
+        repo=board_repo
     )
