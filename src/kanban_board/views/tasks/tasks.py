@@ -2,8 +2,10 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins, status
 from dependency_injector.wiring import Provide, inject
 from drf_spectacular.utils import extend_schema
+from django_filters.rest_framework import DjangoFilterBackend
 
 from di import Container
+from kanban_board.filters import TasksFilter
 from kanban_board.serializers.tasks import CreateTaskSerializer, EditTaskSerializer, TaskSerializer, PreviewTaskSerializer
 from kanban_board.services.board.repo import KanbanBoardRepo
 from kanban_board.services.tasks.create_task import CreateTaskCommand
@@ -22,7 +24,10 @@ class TasksViewSet(
     GenericViewSet
 ):
     pagination_class = pagination.DefaultPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TasksFilter
 
+    @inject
     def get_queryset(
             self,
             repo: TaskRepo = Provide[Container.task_repo],
