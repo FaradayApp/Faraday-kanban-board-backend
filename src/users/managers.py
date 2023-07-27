@@ -9,10 +9,7 @@ class UserManager(BaseUserManager):
         if not username:
             raise ValueError('The username must be set')
         user = self.model(username=username, **extra_fields)
-        if password:
-            user.set_password(password)
-        else:
-            user.set_password(self.generate_random_password)
+        user.set_password(password)
         user.save()
         return user
 

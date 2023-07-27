@@ -15,8 +15,9 @@ class UserRepoImpl(UserRepo):
         return self.qs.order_by('id')
     
     def create(self, user_data: UserEntry) -> User:
-        return User.objects.create(
+        return User.objects.create_user(
             username=user_data.username,
+            password=user_data.password,
             first_name=user_data.first_name,
             last_name=user_data.last_name,
             avatar=user_data.avatar

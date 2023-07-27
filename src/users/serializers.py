@@ -5,6 +5,7 @@ from users.services import entries
 
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=33)
+    password = serializers.CharField(max_length=128, write_only=True)
     first_name = serializers.CharField(max_length=32, required=False, allow_null=True, allow_blank=True)
     last_name = serializers.CharField(max_length=32, required=False, allow_null=True, allow_blank=True)
     avatar = serializers.CharField(max_length=32, required=False, allow_null=True, allow_blank=True)
@@ -16,10 +17,6 @@ class UserSerializer(serializers.Serializer):
 
 
 class LoginUserSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=33)
-
-
-class LoginAdminSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
 
