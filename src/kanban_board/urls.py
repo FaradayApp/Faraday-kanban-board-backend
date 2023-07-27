@@ -6,7 +6,7 @@ from kanban_board.views.tasks.tasks import TasksViewSet
 
 
 albums_router = routers.SimpleRouter()
-albums_router.register(r'(?P<board_id>[\w\-]+)/tasks', TasksViewSet, basename='tasks')
+albums_router.register(r'(?P<board_uuid>[\w\-]+)/tasks', TasksViewSet, basename='tasks')
 
 
 board_urls = [

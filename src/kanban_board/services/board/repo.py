@@ -23,6 +23,9 @@ class KanbanBoardRepo(ABC):
     @abstractmethod   
     def get_board_by_id(self, id: int) -> KanbanBoard: ...
 
+    @abstractmethod   
+    def get_board_by_uuid(self, uuid: str) -> KanbanBoard: ...
+
     @abstractmethod
     def add_user_to_board(self, board: KanbanBoard, user: User) -> None: ...
 

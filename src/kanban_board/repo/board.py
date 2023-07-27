@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
@@ -19,11 +21,15 @@ class KanbanBoardRepoImpl(KanbanBoardRepo):
     
     def create(self, board_data: CreateKanbanBoardEntry) -> KanbanBoard:
         return KanbanBoard.objects.create(
-            group_id=board_data.group_id,
+            title=board_data.title,
+            uuid=str(uuid.uuid4())
         )
     
     def get_board_by_id(self, id: int) -> KanbanBoard:
         return self.qs.get(id=id)
+
+    def get_board_by_uuid(self, uuid: str) -> KanbanBoard:
+        return self.qs.get(uuid=uuid)
 
     def add_user_to_board(self, board: KanbanBoard, user: User) -> None:
         board.users.add(user)

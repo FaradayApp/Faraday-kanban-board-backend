@@ -33,7 +33,7 @@ class TasksViewSet(
             repo: TaskRepo = Provide[Container.task_repo],
             board_repo: KanbanBoardRepo = Provide[Container.board_repo],
             ):
-        board = board_repo.get_board_by_id(id=self.kwargs.get('board_id'))
+        board = board_repo.get_board_by_uuid(uuid=self.kwargs.get('board_uuid'))
         board_repo.check_user_in_board(board=board, user=self.request.user)
         return repo.all(board=board)
 
@@ -61,7 +61,7 @@ class TasksViewSet(
     ):
         task = service(
             user=self.request.user,
-            board_id=self.kwargs.get('board_id'),
+            board_uuid=self.kwargs.get('board_uuid'),
             task_data=serializer.to_entry()
         )
         return TaskSerializer(task, many=False, context={'request': self.request})
@@ -83,7 +83,7 @@ class TasksViewSet(
         task = service(
             user=self.request.user,
             task=serializer.instance,
-            board_id=self.kwargs.get('board_id'),
+            board_uuid=self.kwargs.get('board_uuid'),
             task_data=serializer.to_entry()
         )
         

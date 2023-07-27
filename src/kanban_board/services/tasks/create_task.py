@@ -14,7 +14,7 @@ User = get_user_model()
 class CreateTaskCommand(ABC):
 
     @abstractmethod
-    def __call__(self, user: User, board_id: int, task_data: CreateTaskEntry) -> Task: ...
+    def __call__(self, user: User, board_uuid: str, task_data: CreateTaskEntry) -> Task: ...
 
 
 class CreateTaskCommandImpl(CreateTaskCommand):
@@ -23,8 +23,8 @@ class CreateTaskCommandImpl(CreateTaskCommand):
         self.user_repo = user_repo
         self.board_repo = board_repo
     
-    def __call__(self, user: User, board_id: int, task_data: CreateTaskEntry) -> Task:
-        board = self.board_repo.get_board_by_id(id=board_id)
+    def __call__(self, user: User, board_uuid: str, task_data: CreateTaskEntry) -> Task:
+        board = self.board_repo.get_board_by_uuid(uuid=board_uuid)
         task = self.repo.create(user=user, board=board, task_data=task_data)
         performers = self.user_repo.get_users_by_ids(ids=task_data.performers)
         self.repo.set_performers(task=task, performers=performers)

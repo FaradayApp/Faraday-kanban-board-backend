@@ -1,4 +1,4 @@
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import status, mixins
@@ -12,6 +12,8 @@ from kanban_board.services.board.create_board import CreateKanbanBoardCommand
 
 
 class CreateKanbanBoardAPI(APIView):
+    permission_classes = (IsAdminUser,)
+
     @extend_schema(
         request=CreateKanbanBoardSerializer,
         responses={status.HTTP_201_CREATED: KanbanBoardPreviewSerializer}
