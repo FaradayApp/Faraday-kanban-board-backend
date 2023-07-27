@@ -5,7 +5,7 @@ from kanban_board.services.board.entries import CreateKanbanBoardEntry
 
 
 class CreateKanbanBoardSerializer(serializers.Serializer):
-    group_id = serializers.CharField(max_length=256)
+    title = serializers.CharField(max_length=128)
 
     def to_entry(self) -> CreateKanbanBoardEntry:
         return CreateKanbanBoardEntry(
@@ -19,5 +19,7 @@ class KanbanBoardPreviewSerializer(serializers.ModelSerializer):
         model = KanbanBoard
         fields = (
             'id',
+            'uuid',
+            'title',
             'created_at'
         )

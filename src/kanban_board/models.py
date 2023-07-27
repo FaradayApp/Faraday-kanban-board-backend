@@ -19,7 +19,8 @@ class TaskPriorityTypes(models.IntegerChoices):
 
 
 class KanbanBoard(TimestampModel):
-    group_id = models.CharField(max_length=256, blank=True, null=True)
+    uuid = models.UUIDField(unique=True, null=True, default=None)
+    title = models.CharField(max_length=128, null=True, default=None)
     users = models.ManyToManyField(User, related_name='kanban_boards')
 
 

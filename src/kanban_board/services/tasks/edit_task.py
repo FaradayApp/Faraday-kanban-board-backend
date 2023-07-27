@@ -16,7 +16,7 @@ User = get_user_model()
 class EditTaskCommand(ABC):
 
     @abstractmethod
-    def __call__(self, user: User, task: Task, board_id: int, task_data: CreateTaskEntry) -> Task: ...
+    def __call__(self, user: User, task: Task, board_uuid: str, task_data: CreateTaskEntry) -> Task: ...
 
 
 class EditTaskCommandImpl(EditTaskCommand):
@@ -25,8 +25,8 @@ class EditTaskCommandImpl(EditTaskCommand):
         self.user_repo = user_repo
         self.board_repo = board_repo
     
-    def __call__(self, user: User, task: Task, board_id: int, task_data: CreateTaskEntry) -> Task:
-        board = self.board_repo.get_board_by_id(id=board_id)
+    def __call__(self, user: User, task: Task, board_uuid: str, task_data: CreateTaskEntry) -> Task:
+        board = self.board_repo.get_board_by_uuid(uuid=board_uuid)
         self.validate_board(board=board, task=task)
         validated_data, performers_ids = self.validate_task_data(user=user, task=task, task_data=task_data)
         self.repo.update(task=task, task_data=validated_data)

@@ -1,20 +1,19 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from kanban_board.views.board.board import CreateKanbanBoardAPI
+from kanban_board.views.board.board import KanbanBoardViewSet
 from kanban_board.views.tasks.tasks import TasksViewSet
 
 
-albums_router = routers.SimpleRouter()
-albums_router.register(r'(?P<board_id>[\w\-]+)/tasks', TasksViewSet, basename='tasks')
+board_router = routers.SimpleRouter()
+board_router.register(r'', KanbanBoardViewSet, basename='board')
 
 
-board_urls = [
-    path('', CreateKanbanBoardAPI.as_view(), name='create-board'),
-]
+tasks_router = routers.SimpleRouter()
+tasks_router.register(r'(?P<board_uuid>[\w\-]+)/tasks', TasksViewSet, basename='tasks')
 
 
 urlpatterns = [
-    path('', include(board_urls)),
-    path('', include(albums_router.urls)),
+    path('', include(board_router.urls)),
+    path('', include(tasks_router.urls)),
 ]
