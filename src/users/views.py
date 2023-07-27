@@ -95,15 +95,14 @@ class RefreshTokenAPI(APIView):
     )
     def post(
             self,
-            request, 
-            service: LoginUserCommand = Provide[Container.login_user],
+            request,
             token_service: TokensService = Provide[Container.tokens_service],
             ):
         serializer = serializers.RefreshTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         user = token_service.get_user_by_refresh(refresh_token=serializer.validated_data.get('refresh'))
-        tokens = service(username=user.username)
+        tokens = token_service.make_tokens(user=user)
 
         return Response(serializers.TokenSerializer(tokens).data)
 
