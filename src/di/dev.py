@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 from kanban_board.repo.board import KanbanBoardRepoImpl
 from kanban_board.repo.tasks import TaskRepoImpl
 from kanban_board.services.board.create_board import CreateKanbanBoardCommandImpl
+from kanban_board.services.board.edit_board import EditKanbanBoardCommandImpl
 from kanban_board.services.tasks.create_task import CreateTaskCommandImpl
 from kanban_board.services.tasks.edit_task import EditTaskCommandImpl
 
@@ -38,6 +39,10 @@ class Container(containers.DeclarativeContainer):
 
     create_board = providers.Singleton(
         CreateKanbanBoardCommandImpl,
+        repo=board_repo
+    )
+    edit_board = providers.Singleton(
+        EditKanbanBoardCommandImpl,
         repo=board_repo
     )
     create_task = providers.Singleton(

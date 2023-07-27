@@ -23,7 +23,12 @@ class KanbanBoardRepoImpl(KanbanBoardRepo):
         return KanbanBoard.objects.create(
             title=board_data.title,
             uuid=str(uuid.uuid4())
-        )
+        )    
+    
+    def update(self, board: KanbanBoard, board_data: CreateKanbanBoardEntry) -> KanbanBoard:
+        board.title = board_data.title
+        board.save()
+        return board
     
     def get_board_by_id(self, id: int) -> KanbanBoard:
         return self.qs.get(id=id)

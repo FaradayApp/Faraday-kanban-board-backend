@@ -18,6 +18,7 @@ class KanbanBoardPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = KanbanBoard
         fields = (
+            'id',
             'uuid',
             'title',
             'created_at'

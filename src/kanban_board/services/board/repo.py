@@ -20,6 +20,9 @@ class KanbanBoardRepo(ABC):
     @abstractmethod
     def create(self, board_data: CreateKanbanBoardEntry) -> KanbanBoard: ...
 
+    @abstractmethod
+    def update(self, board: KanbanBoard, board_data: CreateKanbanBoardEntry) -> KanbanBoard: ...
+
     @abstractmethod   
     def get_board_by_id(self, id: int) -> KanbanBoard: ...
 
