@@ -9,6 +9,7 @@ from kanban_board.services.tasks.edit_task import EditTaskCommandImpl
 
 from users.repo.token import TokenRepoImpl
 from users.repo.user import UserRepoImpl
+from users.services.user.add_user_to_board import AddUserToBoardCommandImpl
 from users.services.user.create_user import CreateUserCommandImpl
 from users.services.user.login_user import LoginUserCommandImpl
 from users.services.user.tokens_service import TokensServiceImpl
@@ -56,4 +57,8 @@ class Container(containers.DeclarativeContainer):
         repo=task_repo,
         user_repo=user_repo,
         board_repo=board_repo
+    )
+    add_user_to_board = providers.Singleton(
+        AddUserToBoardCommandImpl,
+        repo=board_repo
     )

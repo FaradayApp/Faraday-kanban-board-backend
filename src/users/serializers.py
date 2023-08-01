@@ -28,3 +28,7 @@ class TokenSerializer(serializers.Serializer):
 
 class RefreshTokenSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+
+
+class BoardUUIDSerializer(serializers.Serializer):
+    board_uuid = serializers.UUIDField()
