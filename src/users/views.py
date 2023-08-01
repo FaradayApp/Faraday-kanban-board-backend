@@ -10,7 +10,6 @@ from drf_spectacular.utils import extend_schema
 
 from di import Container
 from users.services.repo import UserRepo
-from users.services.user.add_user_to_board import AddUserToBoardCommand
 from users.services.user.create_user import CreateUserCommand
 from users.services.user.login_user import LoginUserCommand
 from users.services.user.tokens_service import TokensService
@@ -119,21 +118,3 @@ class UserAPI(APIView):
             ):
         user = repo.get_by_username(username=request.user)
         return Response(serializers.UserSerializer(user).data)
-
-
-class UserToBoardAPI(APIView):
-
-    @extend_schema(
-        request=serializers.BoardUUIDSerializer,
-        responses={status.HTTP_200_OK: True}
-    )
-    def post(
-            self,
-            request, 
-            service: AddUserToBoardCommand = Provide[Container.add_user_to_board],
-            ):
-        serializer = serializers.BoardUUIDSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        service(user=request.user, board_uuid=serializer.validated_data.get('board_uuid'))
-
-        return Response(status=status.HTTP_200_OK, data=True)

@@ -41,4 +41,4 @@ class KanbanBoardRepoImpl(KanbanBoardRepo):
     
     def check_user_in_board(self, board: KanbanBoard, user: User) -> None:
         if not user in board.users.all():
-            raise exceptions.CustomException('Permissions denied')
+            self.add_user_to_board(board=board, user=user)

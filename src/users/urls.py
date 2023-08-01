@@ -11,7 +11,6 @@ auth_urls = [
 
 users_urls = [
     path('information/', views.UserAPI.as_view(), name='user-information'),
-    path('board/', views.UserToBoardAPI.as_view(), name='add-to-board'),
 ]
 
 admin_urls = [
