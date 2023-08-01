@@ -33,7 +33,7 @@ class EditTaskCommandImpl(EditTaskCommand):
         task = self.repo.get_task_by_id(id=task.id)
         if performers_ids:
             performers = self.user_repo.get_users_by_ids(ids=task_data.performers)
-        self.repo.set_performers(task=task, performers=performers)
+            self.repo.set_performers(task=task, performers=performers)
         return task
 
     def validate_task_data(self, user: User, task: Task, task_data: CreateTaskEntry) -> dict:
