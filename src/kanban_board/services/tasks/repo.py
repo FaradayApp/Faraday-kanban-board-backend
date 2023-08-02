@@ -28,3 +28,6 @@ class TaskRepo(ABC):
 
     @abstractmethod
     def update(self, task: Task, task_data: dict) -> None: ...
+
+    @abstractmethod
+    def add_comments_count(self, qs: QuerySet[Task]) -> QuerySet[Task]: ...

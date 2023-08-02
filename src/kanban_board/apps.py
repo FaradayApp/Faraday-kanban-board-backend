@@ -12,4 +12,5 @@ class KanbanBoardConfig(AppConfig):
             ".views.board.board",
             ".views.tasks.tasks",
             ".views.users.users",
+            ".views.comments.comments",
         ])

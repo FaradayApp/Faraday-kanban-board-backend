@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from kanban_board.views.board.board import KanbanBoardViewSet
+from kanban_board.views.comments.comments import CommentsViewSet
 from kanban_board.views.tasks.tasks import TasksViewSet
 from kanban_board.views.users.users import UsersInBoardViewSet
 
@@ -9,10 +10,11 @@ from kanban_board.views.users.users import UsersInBoardViewSet
 board_router = routers.SimpleRouter()
 board_router.register(r'', KanbanBoardViewSet, basename='board')
 
+comments_router = routers.SimpleRouter()
+comments_router.register(r'(?P<board_uuid>[\w\-]+)/tasks/(?P<task_id>[\w\-]+)/comments', CommentsViewSet, basename='comments')
 
 tasks_router = routers.SimpleRouter()
 tasks_router.register(r'(?P<board_uuid>[\w\-]+)/tasks', TasksViewSet, basename='tasks')
-
 
 users_board_router = routers.SimpleRouter()
 users_board_router.register(r'(?P<board_uuid>[\w\-]+)/users', UsersInBoardViewSet, basename='users-in-board')
@@ -20,6 +22,7 @@ users_board_router.register(r'(?P<board_uuid>[\w\-]+)/users', UsersInBoardViewSe
 
 urlpatterns = [
     path('', include(board_router.urls)),
+    path('', include(comments_router.urls)),
     path('', include(tasks_router.urls)),
     path('', include(users_board_router.urls)),
 ]

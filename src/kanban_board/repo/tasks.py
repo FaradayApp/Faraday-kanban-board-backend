@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
+from django.db.models import Count
 
 from kanban_board.models import Task, KanbanBoard
 from kanban_board.services.tasks.entries import CreateTaskEntry
@@ -33,3 +34,6 @@ class TaskRepoImpl(TaskRepo):
 
     def update(self, task: Task, task_data: dict) -> None:
         self.qs.filter(id=task.id).update(**task_data)
+    
+    def add_comments_count(self, qs: QuerySet[Task]) -> QuerySet[Task]:
+        return qs.annotate(comments_count=Count('comments'))
