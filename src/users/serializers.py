@@ -4,6 +4,7 @@ from users.services import entries
 
 
 class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(max_length=33)
     password = serializers.CharField(max_length=128, write_only=True)
     first_name = serializers.CharField(max_length=32, required=False, allow_null=True, allow_blank=True)

@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from kanban_board.models import Task
 from kanban_board.services.tasks.entries import CreateTaskEntry, EditTaskEntry
+from users.serializers import UserSerializer
 
 
 class CreateTaskSerializer(serializers.Serializer):
@@ -33,6 +34,8 @@ class EditTaskSerializer(serializers.Serializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):  # TODO comments and users
+    producer = UserSerializer(many=False, read_only=True)
+    performers = UserSerializer(many=True, read_only=True)
 
     class Meta:
         model = Task
@@ -50,6 +53,7 @@ class TaskSerializer(serializers.ModelSerializer):  # TODO comments and users
 
 
 class PreviewTaskSerializer(serializers.ModelSerializer):  # TODO comments and users
+    performers = UserSerializer(many=True, read_only=True)
 
     class Meta:
         model = Task
