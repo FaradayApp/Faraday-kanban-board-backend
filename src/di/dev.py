@@ -1,9 +1,12 @@
 from dependency_injector import containers, providers
 
 from kanban_board.repo.board import KanbanBoardRepoImpl
+from kanban_board.repo.comments import CommentsRepoImpl
 from kanban_board.repo.tasks import TaskRepoImpl
 from kanban_board.services.board.create_board import CreateKanbanBoardCommandImpl
 from kanban_board.services.board.edit_board import EditKanbanBoardCommandImpl
+from kanban_board.services.comments.create_comment import CreateCommentCommandImpl
+from kanban_board.services.comments.edit_comment import EditCommentCommandImpl
 from kanban_board.services.tasks.create_task import CreateTaskCommandImpl
 from kanban_board.services.tasks.edit_task import EditTaskCommandImpl
 
@@ -57,3 +60,17 @@ class Container(containers.DeclarativeContainer):
         user_repo=user_repo,
         board_repo=board_repo
     )
+
+    #comments
+    comments_repo =  providers.Singleton(CommentsRepoImpl)
+
+    create_comment = providers.Singleton(
+        CreateCommentCommandImpl,
+        repo=comments_repo,
+        task_repo=task_repo
+    )
+    edit_comment = providers.Singleton(
+        EditCommentCommandImpl,
+        repo=comments_repo
+    )
+
