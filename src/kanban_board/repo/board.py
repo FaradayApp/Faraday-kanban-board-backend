@@ -42,3 +42,6 @@ class KanbanBoardRepoImpl(KanbanBoardRepo):
     def check_user_in_board(self, board: KanbanBoard, user: User) -> None:
         if not user in board.users.all():
             self.add_user_to_board(board=board, user=user)
+        
+    def get_board_users(self, board:  KanbanBoard) -> QuerySet[User]:
+        return board.users.all()
