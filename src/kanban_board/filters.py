@@ -13,6 +13,13 @@ class TasksFilter(django_filters.FilterSet):
         model = models.Task
         fields = ['status']
 
+    order_by = django_filters.OrderingFilter(
+        fields=(
+            ('expiration_date', 'expiration_date'),
+            ('priority', 'priority'),
+        )
+    )
+
 
 class UsersInBoardFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_user')
