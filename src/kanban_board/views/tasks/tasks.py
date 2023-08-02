@@ -35,6 +35,8 @@ class TasksViewSet(
             ):
         board = board_repo.get_board_by_uuid(uuid=self.kwargs.get('board_uuid'))
         board_repo.check_user_in_board(board=board, user=self.request.user)
+        if self.action == 'list':
+            return repo.add_comments_count(repo.all(board=board))
         return repo.all(board=board)
 
     def get_serializer_class(self):
