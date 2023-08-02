@@ -11,4 +11,5 @@ class KanbanBoardConfig(AppConfig):
         container.wire(modules=[
             ".views.board.board",
             ".views.tasks.tasks",
+            ".views.users.users",
         ])
