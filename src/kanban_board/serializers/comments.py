@@ -7,6 +7,7 @@ from users.serializers import UserSerializer
 
 class CommentSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
     text = serializers.CharField(max_length=600)
     user =  UserSerializer(many=False, read_only=True)
 
