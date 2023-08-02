@@ -13,7 +13,7 @@ from kanban_board.services.comments.repo import CommentsRepo
 from kanban_board.services.tasks.repo import TaskRepo
 
 from utils.mixins import CustomCreateModelMixin, CustomUpdateModelMixin
-from utils import pagination
+from utils import exceptions, pagination
 
 
 class CommentsViewSet(
@@ -36,6 +36,12 @@ class CommentsViewSet(
         board_repo.check_user_in_board(board=board, user=self.request.user)
         task = task_repo.get_task_by_id(id=self.kwargs.get('task_id'))
         return repo.all(task=task)
+    
+    def get_object(self):
+        obj = super().get_object()
+        if self.action in ('update', 'partial_update', 'destroy') and obj.user != self.request.user:
+            raise exceptions.CustomException('Permission denied')
+        return obj
 
     def get_serializer_class(self):
         return CommentSerializer
