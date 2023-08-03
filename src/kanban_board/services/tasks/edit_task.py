@@ -34,6 +34,8 @@ class EditTaskCommandImpl(EditTaskCommand):
         if performers_ids:
             performers = self.user_repo.get_users_by_ids(ids=task_data.performers)
             self.repo.set_performers(task=task, performers=performers)
+        else:
+            self.repo.clear_performers(task=task)
         return task
 
     def validate_task_data(self, user: User, task: Task, task_data: CreateTaskEntry) -> dict:
@@ -46,7 +48,7 @@ class EditTaskCommandImpl(EditTaskCommand):
             else:
                 performers = None
         else:
-            performers = task_data.performers
+            performers = None
 
         if task_data.status:
             data["status"] = task_data.status

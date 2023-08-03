@@ -31,3 +31,6 @@ class TaskRepo(ABC):
 
     @abstractmethod
     def add_comments_count(self, qs: QuerySet[Task]) -> QuerySet[Task]: ...
+
+    @abstractmethod
+    def clear_performers(self, task: Task) -> None: ...

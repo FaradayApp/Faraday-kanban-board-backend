@@ -24,7 +24,7 @@ class EditTaskSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=60, required=False)
     description = serializers.CharField(max_length=1000, required=False)
     expiration_date = serializers.DateField(required=False)
-    performers = serializers.ListField(child=serializers.IntegerField(), required=False)
+    performers = serializers.ListField(child=serializers.IntegerField())
     status = serializers.IntegerField(min_value=1, max_value=5, required=False)
     priority = serializers.IntegerField(min_value=1, max_value=3, required=False)
 

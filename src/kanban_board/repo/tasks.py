@@ -37,3 +37,6 @@ class TaskRepoImpl(TaskRepo):
     
     def add_comments_count(self, qs: QuerySet[Task]) -> QuerySet[Task]:
         return qs.annotate(comments_count=Count('comments'))
+    
+    def clear_performers(self, task: Task) -> None:
+        task.performers.clear()
