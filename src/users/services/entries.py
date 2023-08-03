@@ -10,3 +10,10 @@ class UserEntry:
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     avatar: Union[str, BytesIO] = None
+
+
+@dataclass
+class EditUserEntry:
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    avatar: Union[str, BytesIO] = None

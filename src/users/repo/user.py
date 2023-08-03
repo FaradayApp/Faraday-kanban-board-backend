@@ -23,6 +23,10 @@ class UserRepoImpl(UserRepo):
             avatar=user_data.avatar
         )
     
+    def save(self, user: User) -> User:
+        user.save()
+        return user
+    
     def user_exists(self, **kwargs) -> bool:
         return User.objects.filter(**kwargs).exists()
 

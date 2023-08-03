@@ -10,7 +10,7 @@ auth_urls = [
 ]
 
 users_urls = [
-    path('information/', views.UserAPI.as_view(), name='user-information'),
+    path('', views.UserAPI.as_view(), name='user'),
 ]
 
 admin_urls = [

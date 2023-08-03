@@ -19,6 +19,9 @@ class UserRepo(ABC):
 
     @abstractmethod
     def create(self, user_data: UserEntry) -> User: ...
+
+    @abstractmethod
+    def save(self, user: User) -> User: ...
     
     @abstractmethod
     def user_exists(self,**kwargs) -> bool: ...
