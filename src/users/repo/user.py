@@ -19,8 +19,7 @@ class UserRepoImpl(UserRepo):
             username=user_data.username,
             password=user_data.password,
             first_name=user_data.first_name,
-            last_name=user_data.last_name,
-            avatar=user_data.avatar
+            last_name=user_data.last_name
         )
     
     def save(self, user: User) -> User:

@@ -124,7 +124,7 @@ class UserAPI(APIView):
         request=serializers.EditUserSerializer,
         responses={status.HTTP_200_OK: serializers.UserSerializer}
     )
-    def post(
+    def put(
             self,
             request, 
             service: EditUserCommand = Provide[Container.edit_user],

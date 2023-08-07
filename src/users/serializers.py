@@ -9,7 +9,7 @@ class UserSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, write_only=True)
     first_name = serializers.CharField(max_length=32, required=False, allow_null=True, allow_blank=True)
     last_name = serializers.CharField(max_length=32, required=False, allow_null=True, allow_blank=True)
-    avatar = serializers.ImageField(required=False, allow_null=True, default=None)
+    avatar = serializers.ImageField(read_only=True)
 
     def to_entry(self) -> entries.UserEntry:
         return entries.UserEntry(
@@ -20,7 +20,7 @@ class UserSerializer(serializers.Serializer):
 class EditUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=32, required=False, allow_null=True, allow_blank=True)
     last_name = serializers.CharField(max_length=32, required=False, allow_null=True, allow_blank=True)
-    avatar = serializers.ImageField(required=False, allow_null=True, default=None)
+    avatar = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     def to_entry(self) -> entries.UserEntry:
         return entries.EditUserEntry(
