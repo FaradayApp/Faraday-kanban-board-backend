@@ -114,7 +114,7 @@ USE_TZ = True
 STATIC_URL = os.environ.get('STATIC_URL')
 STATIC_ROOT = '/static/'
 
-MEDIA_URL = os.environ.get('MEDIA_URL')
+MEDIA_URL = 'https://shildichat.sixhands.co/media/'  #TODO temporarily
 MEDIA_ROOT = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
