@@ -50,7 +50,13 @@ class TasksViewSet(
 
     @extend_schema(
         request=CreateTaskSerializer,
-        responses={status.HTTP_201_CREATED: TaskSerializer}
+        responses={status.HTTP_201_CREATED: TaskSerializer},
+        description="""
+            Метод для создания задачи.
+            Метод принимает информацию о задаче и создает ее в базе данных, прикрепляя к ней необходимых пользователей, как исполнителей. 
+            Создателя задачи прикрепляет, как ее постановщика.
+            Возвращает информацию о задаче.
+        """
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
@@ -70,7 +76,14 @@ class TasksViewSet(
 
     @extend_schema(
         request=EditTaskSerializer,
-        responses={status.HTTP_200_OK: TaskSerializer}
+        responses={status.HTTP_200_OK: TaskSerializer},
+        description="""
+            Метод для обновления задачи.
+            Логика работы метода отличается от пользователя вызывающего его.
+            Для создателя задачи, принимает обновленную информацию о задаче и меняет ее в базе данных.
+            Остальные пользователи могут только изменить статус задачи.
+            Возвращает информацию о задаче.
+        """
     )
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
@@ -90,3 +103,24 @@ class TasksViewSet(
         )
         
         return TaskSerializer(task, many=False, context={'request': self.request})
+    
+    @extend_schema(
+        responses={status.HTTP_200_OK: TaskSerializer},
+        description="""
+            Метод для получения списка задач в доске.
+            Возвращает список всех задач доски.
+            В методе реализована пагинация, управлять которой можно с помощью параметров page и page_size
+        """
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        responses={status.HTTP_200_OK: TaskSerializer},
+        description="""
+            Метод для получения задачи.
+            Возвращает подробную информацию о задаче.
+        """
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
