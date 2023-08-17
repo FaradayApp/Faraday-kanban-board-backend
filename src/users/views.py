@@ -22,7 +22,11 @@ class RegistrationUserAPI(APIView):
 
     @extend_schema(
         request=serializers.UserSerializer,
-        responses={status.HTTP_201_CREATED: serializers.TokenSerializer}
+        responses={status.HTTP_201_CREATED: serializers.TokenSerializer},
+        description="""
+            Метод для регистрации пользователя. 
+            Создает пользователя в базе данных, возвращает JWT токены для работы с api.
+        """
     )
     def post(
             self,
@@ -45,7 +49,11 @@ class LoginUserAPI(APIView):
 
     @extend_schema(
         request=serializers.LoginUserSerializer,
-        responses={status.HTTP_200_OK: serializers.TokenSerializer}
+        responses={status.HTTP_200_OK: serializers.TokenSerializer},
+        description="""
+            Метод для авторизации пользователя. 
+            Находит пользователя в базе данных по логину\паролю, возвращает JWT токены для работы с api.
+        """
     )
     def post(
             self,
@@ -69,7 +77,11 @@ class LoginAdminAPI(APIView):
 
     @extend_schema(
         request=serializers.LoginUserSerializer,
-        responses={status.HTTP_200_OK: serializers.TokenSerializer}
+        responses={status.HTTP_200_OK: serializers.TokenSerializer},
+        description="""
+            Метод для авторизации администратора. 
+            Находит администратора в базе данных по логину\паролю, возвращает JWT токены для работы с api.
+        """
     )
     def post(
             self,
@@ -92,7 +104,12 @@ class RefreshTokenAPI(APIView):
 
     @extend_schema(
         request=serializers.RefreshTokenSerializer,
-        responses={status.HTTP_200_OK: serializers.TokenSerializer}
+        responses={status.HTTP_200_OK: serializers.TokenSerializer},
+        description="""
+            Метод для получения access token. 
+            Метод принимает refresh token, проверяет его корректность и находит нужного пользователя в базе данных.
+            Возвращает JWT токены для работы с api.
+        """
     )
     def post(
             self,
@@ -110,7 +127,11 @@ class RefreshTokenAPI(APIView):
 
 class UserAPI(APIView):
     @extend_schema(
-        responses={status.HTTP_200_OK: serializers.UserSerializer}
+        responses={status.HTTP_200_OK: serializers.UserSerializer},
+        description="""
+            Метод для получения пользователя. 
+            Метод возвращает информацию о пользователе, запросившем ее.
+        """
     )
     def get(
             self,
@@ -122,7 +143,13 @@ class UserAPI(APIView):
 
     @extend_schema(
         request=serializers.EditUserSerializer,
-        responses={status.HTTP_200_OK: serializers.UserSerializer}
+        responses={status.HTTP_200_OK: serializers.UserSerializer},
+        description="""
+            Метод для обновления информации пользователя. 
+            Метод принимает новые изменяемые данные о пользователя имя\фамиля\аватарка и осуществляет их замену в базе данных.
+            Аватарка передается в Base64.
+            Возвращает новую информацию о пользователе.
+        """
     )
     def put(
             self,
