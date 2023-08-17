@@ -48,7 +48,12 @@ class CommentsViewSet(
 
     @extend_schema(
         request=CommentSerializer,
-        responses={status.HTTP_201_CREATED: CommentSerializer}
+        responses={status.HTTP_201_CREATED: CommentSerializer},
+        description="""
+            Метод для создания комментария.
+            Принимает текст комментария, создает его в базе данных подставляя отправителя запроса, как его создателя.
+            Возвращает комментарий.
+        """
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
@@ -68,7 +73,13 @@ class CommentsViewSet(
 
     @extend_schema(
         request=CommentSerializer,
-        responses={status.HTTP_200_OK: CommentSerializer}
+        responses={status.HTTP_200_OK: CommentSerializer},
+        description="""
+            Метод для обновления комментария.
+            Только для создателя комментария.
+            Принимает новый текст комментария и меняет его в базе данных.
+            Возвращает комментарий.
+        """
     )
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
@@ -79,7 +90,6 @@ class CommentsViewSet(
         serializer: CommentSerializer,
         service: EditCommentCommand = Provide[Container.edit_comment]
     ):
-
         comment = service(
             user=self.request.user,
             comment=serializer.instance,
@@ -87,3 +97,24 @@ class CommentsViewSet(
         )
         
         return CommentSerializer(comment, many=False, context={'request': self.request})
+    
+    @extend_schema(
+        responses={status.HTTP_200_OK: CommentSerializer},
+        description="""
+            Метод для получения списка комментариев к задаче.
+            Возвращает список комментариев, оставленных в определенной задаче.
+            В методе реализована пагинация, управлять которой можно с помощью параметров page и page_size
+        """
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        responses={status.HTTP_204_NO_CONTENT: None},
+        description="""
+            Метод для удаления комментария.
+            Только для создателя комментария.
+        """
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)

@@ -39,7 +39,13 @@ class KanbanBoardViewSet(
 
     @extend_schema(
         request=CreateKanbanBoardSerializer,
-        responses={status.HTTP_201_CREATED: KanbanBoardPreviewSerializer}
+        responses={status.HTTP_201_CREATED: KanbanBoardPreviewSerializer},
+        description="""
+            Метод для создания доски.
+            Только для администратора.
+            Создает новую канбан доску. Для создания необходимо передать title доски. 
+            Возвращает информацию о доске, в том числе uuid доски, который нужен для работы с ней.
+        """
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
@@ -59,7 +65,13 @@ class KanbanBoardViewSet(
 
     @extend_schema(
         request=CreateKanbanBoardSerializer,
-        responses={status.HTTP_200_OK: KanbanBoardPreviewSerializer}
+        responses={status.HTTP_200_OK: KanbanBoardPreviewSerializer},
+        description="""
+            Метод для обновления информации о доске.
+            Только для администратора.
+            Обновляет информацию о доске.
+            Возвращает объект доски с информацией о ней.
+        """
     )
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
@@ -76,3 +88,27 @@ class KanbanBoardViewSet(
             )
 
         return KanbanBoardPreviewSerializer(board, many=False, context={'request': self.request})
+    
+    @extend_schema(
+        request=CreateKanbanBoardSerializer,
+        responses={status.HTTP_200_OK: KanbanBoardPreviewSerializer},
+        description="""
+            Метод для получения списка досок.
+            Только для администратора.
+            Возвращает список всех досок.
+            В методе реализована пагинация, управлять которой можно с помощью параметров page и page_size
+        """
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+    
+    @extend_schema(
+        request=CreateKanbanBoardSerializer,
+        responses={status.HTTP_204_NO_CONTENT: None},
+        description="""
+            Метод для удаления доски.
+            Только для администратора.
+        """
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
