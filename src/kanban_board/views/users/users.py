@@ -1,7 +1,8 @@
 from rest_framework.viewsets import GenericViewSet
-from rest_framework import mixins
+from rest_framework import mixins, status
 from dependency_injector.wiring import Provide, inject
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 
 from di import Container
 from kanban_board.filters import UsersInBoardFilter
@@ -29,3 +30,14 @@ class UsersInBoardViewSet(
 
     def get_serializer_class(self):
         return UserSerializer
+
+    @extend_schema(
+        responses={status.HTTP_200_OK: UserSerializer},
+        description="""
+            Метод для получения списка пользователей доски.
+            Возвращает список пользователей, которые подключены к доске и могу работать с ней.
+            В методе реализована пагинация, управлять которой можно с помощью параметров page и page_size
+        """
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
