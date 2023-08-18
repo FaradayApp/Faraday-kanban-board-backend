@@ -27,6 +27,8 @@ class LoginUserCommandImpl(LoginUserCommand):
     def __call__(self, username: str, password: str) -> dict:
         if self.repo.user_exists(username=username):
             user = authenticate(username=username, password=password)
+            if not user:
+                raise exceptions.CustomException('Wrong login or password')
             if user.is_superuser:
                 self.__raise_user_not_found()
             return self.tokens_service.make_tokens(user=user)
