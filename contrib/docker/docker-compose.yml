@@ -1,0 +1,56 @@
+# This compose file is compatible with Compose itself, it might need some
+# adjustments to run properly with stack.
+
+version: '3'
+
+services:
+
+  synapse:
+    build:
+        context: ../..
+        dockerfile: docker/editable.Dockerfile
+    image: docker.io/matrixdotorg/synapse:latest
+    # Since synapse does not retry to connect to the database, restart upon
+    # failure
+    restart: unless-stopped
+    command: python start.py
+    # See the readme for a full documentation of the environment settings
+    # NOTE: You must edit homeserver.yaml to use postgres, it defaults to sqlite
+    environment:
+      - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+    volumes:
+      # You may either store all the files in a local folder
+      - ./files:/data
+      # .. or you may split this between different storage points
+      # - ./files:/data
+      # - /path/to/ssd:/data/uploads
+      # - /path/to/large_hdd:/data/media
+    depends_on:
+      - db
+    # In order to expose Synapse, remove one of the following, you might for
+    # instance expose the TLS port directly:
+    ports:
+      - 8008:8008
+    # ... or use a reverse proxy, here is an example for traefik:
+    labels:
+      # The following lines are valid for Traefik version 1.x:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:my.matrix.Host
+      - traefik.port=8008
+    
+  db:
+    image: postgres:14.5-alpine
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=synapse
+      - POSTGRES_DB=synapse
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    container_name: synapse-db
+    ports:
+      - "5432"
+
+volumes:
+  postgresql_data:
+    name: postgresql_data
