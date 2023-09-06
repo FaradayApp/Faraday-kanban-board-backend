@@ -44,7 +44,7 @@ trusted_key_servers:
 enable_registration: true
 enable_registration_without_verification: true
 
-# email settings
+#email settings
 # email:
 #   smtp_host: smtp.gmail.com
 #   smtp_port: 465
@@ -59,7 +59,6 @@ enable_registration_without_verification: true
 #   notif_for_new_users: false
 #   client_base_url: "http://localhost/riot"
 #   validation_token_lifetime: 15m
-#   # invite_client_location: https://app.element.io
 
 #   subjects:
 #     message_from_person_in_room: "[%(app)s] You have a message on %(app)s from %(person)s in the %(room)s room..."
