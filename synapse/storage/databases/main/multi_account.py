@@ -25,7 +25,7 @@ class MultiAccountStore(SQLBaseStore):
     def create_multi_account(self, user1_id: str, user2_id: str):
         pass
 
-    def get_multi_account_info(self, user_id: str) -> List[str]:
+    def get_multi_account_info(self, user_id: str):
         pass
 
     def add_user_to_multi_account(self, user1_id: str, user2_id: str):
