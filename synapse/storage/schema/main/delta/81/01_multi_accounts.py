@@ -9,13 +9,15 @@ def run_create(
 ) -> None:
     if isinstance(database_engine, synapse.storage.engines.PostgresEngine):
         select_sql = """
-            CREATE TABLE IF NOT EXISTS multi_account_relations (
-            user_id_1 TEXT,
-            user_id_2 TEXT,
-            user_id_3 TEXT,
-            user_id_4 TEXT,
-            user_id_5 TEXT,
-            PRIMARY KEY (user_id_1, user_id_2, user_id_3, user_id_4, user_id_5)
+            CREATE TABLE IF NOT EXISTS multi_accounts (
+                id INTEGER PRIMARY KEY
+            );
+
+            CREATE TABLE IF NOT EXISTS multi_account_user_association (
+                id INTEGER PRIMARY KEY,
+                multi_account_id INTEGER,
+                user_id TEXT NOT NULL,
+                FOREIGN KEY (multi_account_id) REFERENCES multi_accounts(id)
             );
         """
         cur.execute(select_sql)
@@ -27,13 +29,15 @@ def run_upgrade(
 ) -> None:
     if isinstance(database_engine, synapse.storage.engines.PostgresEngine):
         select_sql = """
-            CREATE TABLE IF NOT EXISTS multi_account_relations (
-            user_id_1 TEXT,
-            user_id_2 TEXT,
-            user_id_3 TEXT,
-            user_id_4 TEXT,
-            user_id_5 TEXT,
-            PRIMARY KEY (user_id_1, user_id_2, user_id_3, user_id_4, user_id_5)
+            CREATE TABLE IF NOT EXISTS multi_accounts (
+                id INTEGER PRIMARY KEY
+            );
+
+            CREATE TABLE IF NOT EXISTS multi_account_user_association (
+                id INTEGER PRIMARY KEY,
+                multi_account_id INTEGER,
+                user_id TEXT NOT NULL,
+                FOREIGN KEY (multi_account_id) REFERENCES multi_accounts(id)
             );
         """
         cur.execute(select_sql)
