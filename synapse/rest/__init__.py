@@ -58,6 +58,7 @@ from synapse.rest.client import (
     user_directory,
     versions,
     voip,
+    multi_account,
 )
 
 if TYPE_CHECKING:
@@ -138,6 +139,7 @@ class ClientRestResource(JsonResource):
         password_policy.register_servlets(hs, client_resource)
         knock.register_servlets(hs, client_resource)
         appservice_ping.register_servlets(hs, client_resource)
+        multi_account.register_servlets(hs, client_resource)
 
         # moving to /_synapse/admin
         if is_main_process:
