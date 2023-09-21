@@ -31,11 +31,11 @@ logger = logging.getLogger(__name__)
 
 class MultiAccountServlet(RestServlet):
     """
-    GET /user/{user_id}/multi_account HTTP/1.1
+    GET /user/multi_account HTTP/1.1
     """
 
     PATTERNS = client_patterns(
-        "/user/(?P<user_id>[^/]*)/multi_account",
+        "/user/multi_account",
         releases=("v3", "r0"),
         v1=True
     )
@@ -44,19 +44,18 @@ class MultiAccountServlet(RestServlet):
     def __init__(self, hs: "HomeServer"):
         super().__init__()
         self._hs = hs
-        # self.auth = hs.get_auth()
-        # self.store = hs.get_datastores().main
-        # self.handler = hs.get_account_data_handler()
-        # self._push_rules_handler = hs.get_push_rules_handler()
+        self.auth = hs.get_auth()
+        self.store = hs.get_datastores().main
+        self.handler = hs.get_account_data_handler()
+        self._push_rules_handler = hs.get_push_rules_handler()
 
     async def on_GET(
-        self, request: SynapseRequest, user_id: str
+        self, request: SynapseRequest,
     ) -> Tuple[int, JsonDict]:
-        # requester = await self.auth.get_user_by_req(request)
-        # if user_id != requester.user.to_string():
-        #     raise AuthError(403, "Cannot get account data for other users.")
+        requester = await self.auth.get_user_by_req(request)
+        user_id = requester.user.to_string()
 
-        return 200, {"status": "OK"}
+        return 200, {"user": user_id}
 
 
 def register_servlets(hs: "HomeServer", http_server: HttpServer) -> None:
