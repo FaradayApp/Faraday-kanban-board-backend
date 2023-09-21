@@ -15,7 +15,7 @@
 import logging
 from typing import TYPE_CHECKING, Optional, Tuple
 
-from synapse.api.errors import AuthError, NotFoundError
+from synapse.api.errors import AuthError, NotFoundError, StoreError
 from synapse.http.server import HttpServer
 from synapse.http.servlet import RestServlet, parse_json_object_from_request
 from synapse.http.site import SynapseRequest
@@ -54,8 +54,21 @@ class MultiAccountServlet(RestServlet):
     ) -> Tuple[int, JsonDict]:
         requester = await self.auth.get_user_by_req(request)
         user_id = requester.user.to_string()
+        multi_account_id = await self.store.get_multi_account(user_id=user_id)
+        if multi_account_id is None:
+            raise NotFoundError("Multi account not found")
+        return 200, await self.store.get_multi_account_info(multi_account_id)
 
-        return 200, {"user": user_id}
+    async def on_POST(
+        self, request: SynapseRequest,
+    ) -> Tuple[int, JsonDict]:
+        requester = await self.auth.get_user_by_req(request)
+        user_id = requester.user.to_string()
+        multi_account_id = await self.store.get_multi_account(user_id=user_id)
+        if multi_account_id:
+            raise StoreError(code=400, msg="Multi account exists")
+        multi_account_id = await self.store.create_multi_account(user_id=user_id)
+        return 200, await self.store.get_multi_account_info(multi_account_id)
 
 
 def register_servlets(hs: "HomeServer", http_server: HttpServer) -> None:

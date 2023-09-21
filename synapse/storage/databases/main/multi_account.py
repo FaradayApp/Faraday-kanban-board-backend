@@ -34,7 +34,7 @@ class MultiAccountStore(SQLBaseStore):
             allow_none=True,
             desc="get_multi_account_id",
         )
-        return row['user_id']
+        return row
 
     async def create_multi_account(self, user_id: str) -> None:
         multi_account_id = await self.generate_uuid()
@@ -55,6 +55,7 @@ class MultiAccountStore(SQLBaseStore):
             },
             desc="insert_multi_account",
         )
+        return multi_account_id
 
     async def get_multi_account_info(self, id: str) -> List[int]:
         row = await self.db_pool.simple_select_list(
@@ -63,10 +64,9 @@ class MultiAccountStore(SQLBaseStore):
             retcols=(
                 "user_id ",
             ),
-            allow_none=True,
             desc="get_users_in_multi_account",
         )
-        return [entry["id"] for entry in row]
+        return row
 
     async def add_user_to_multi_account(self, id: str, user_id: str) -> None:
         await self.db_pool.simple_insert(
@@ -99,5 +99,5 @@ class MultiAccountStore(SQLBaseStore):
             desc="delete_multi_account",
         )
 
-    async def generate_uuid() -> str:
+    async def generate_uuid(self) -> str:
         return str(uuid.uuid4())

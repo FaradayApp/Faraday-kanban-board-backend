@@ -10,12 +10,11 @@ def run_create(
     if isinstance(database_engine, synapse.storage.engines.PostgresEngine):
         select_sql = """
             CREATE TABLE IF NOT EXISTS multi_accounts (
-                id UUID PRIMARY KEY
+                id TEXT PRIMARY KEY
             );
 
             CREATE TABLE IF NOT EXISTS multi_account_user_association (
-                id INTEGER PRIMARY KEY,
-                multi_account_id UUID NOT NULL,
+                multi_account_id TEXT NOT NULL,
                 user_id TEXT NOT NULL,
                 FOREIGN KEY (multi_account_id) REFERENCES multi_accounts(id)
             );
@@ -30,12 +29,11 @@ def run_upgrade(
     if isinstance(database_engine, synapse.storage.engines.PostgresEngine):
         select_sql = """
             CREATE TABLE IF NOT EXISTS multi_accounts (
-                id UUID PRIMARY KEY
+                id TEXT PRIMARY KEY
             );
 
             CREATE TABLE IF NOT EXISTS multi_account_user_association (
-                id INTEGER PRIMARY KEY,
-                multi_account_id UUID NOT NULL,
+                multi_account_id TEXT NOT NULL,
                 user_id TEXT NOT NULL,
                 FOREIGN KEY (multi_account_id) REFERENCES multi_accounts(id)
             );

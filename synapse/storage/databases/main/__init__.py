@@ -51,6 +51,7 @@ from .lock import LockStore
 from .media_repository import MediaRepositoryStore
 from .metrics import ServerMetricsStore
 from .monthly_active_users import MonthlyActiveUsersWorkerStore
+from .multi_account import MultiAccountStore
 from .openid import OpenIdStore
 from .presence import PresenceStore
 from .profile import ProfileStore
@@ -129,6 +130,7 @@ class DataStore(
     LockStore,
     SessionStore,
     TaskSchedulerWorkerStore,
+    MultiAccountStore,
 ):
     def __init__(
         self,
