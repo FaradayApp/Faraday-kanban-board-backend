@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 class MultiAccountServlet(RestServlet):
     """
     GET /user/multi_account HTTP/1.1
+    POST /user/multi_account HTTP/1.1
     """
 
     PATTERNS = client_patterns(
@@ -54,10 +55,11 @@ class MultiAccountServlet(RestServlet):
     ) -> Tuple[int, JsonDict]:
         requester = await self.auth.get_user_by_req(request)
         user_id = requester.user.to_string()
-        multi_account_id = await self.store.get_multi_account(user_id=user_id)
-        if multi_account_id is None:
+        multi_account = await self.store.get_multi_account(user_id=user_id)
+        if multi_account is None:
             raise NotFoundError("Multi account not found")
-        return 200, await self.store.get_multi_account_info(multi_account_id)
+        multi_account_id = multi_account["multi_account_id"]
+        return 200, await self.store.get_multi_account_info(multi_account_id)  # TODO
 
     async def on_POST(
         self, request: SynapseRequest,
@@ -68,7 +70,43 @@ class MultiAccountServlet(RestServlet):
         if multi_account_id:
             raise StoreError(code=400, msg="Multi account exists")
         multi_account_id = await self.store.create_multi_account(user_id=user_id)
-        return 200, await self.store.get_multi_account_info(multi_account_id)
+        return 201, await self.store.get_multi_account_info(multi_account_id)   # TODO
+    
+    async def on_PUT(
+        self, request: SynapseRequest,
+    ) -> Tuple[int, JsonDict]:
+        # get users for multi-account
+        requester = await self.auth.get_user_by_req(request)
+        user_id = requester.user.to_string()
+        body = parse_json_object_from_request(request)
+        new_user_data = await self.store.get_user_by_access_token(body["token"])
+        new_user_id = new_user_data.user_id
+        
+        # check for multi-account exists
+        if user_id == new_user_id:
+            raise StoreError(code=400, msg="Incorrect user")
+        second_user_multi_account = await self.store.get_multi_account(user_id=new_user_id)
+        if second_user_multi_account:
+            second_user_multi_account_id = second_user_multi_account["multi_account_id"]
+            users_in_multi_account = await self.store.get_multi_account_info(second_user_multi_account_id)
+            if len(users_in_multi_account) <= 1:
+                await self.store.delete_multi_account(second_user_multi_account_id)
+            else:
+                raise StoreError(code=400, msg="User is in a different multi-account")
+        
+        # multi-account check
+        multi_account = await self.store.get_multi_account(user_id=user_id)
+        if multi_account:
+            multi_account_id = multi_account["multi_account_id"]
+            users_in_multi_account = await self.store.get_multi_account_info(multi_account_id)
+            if len(users_in_multi_account) > 4:
+                raise StoreError(code=400, msg="Multi-account has a maximum number of users")
+        else:
+            multi_account_id = await self.store.create_multi_account(user_id=user_id)
+        
+        # add new user in multi-account
+        await self.store.add_user_to_multi_account(id=multi_account_id, user_id=new_user_id)
+        return 200, {"status": "OK"}
 
 
 def register_servlets(hs: "HomeServer", http_server: HttpServer) -> None:

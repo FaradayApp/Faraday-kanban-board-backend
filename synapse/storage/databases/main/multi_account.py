@@ -89,7 +89,9 @@ class MultiAccountStore(SQLBaseStore):
     async def delete_multi_account(self, id: str) -> None:
         await self.db_pool.simple_delete_many(
             "multi_account_user_association",
-            keyvalues={"multi_account_id": id},
+            column="multi_account_id",
+            iterable=[id],
+            keyvalues={},
             desc="delete_users_from_multi_account",
         )
 
