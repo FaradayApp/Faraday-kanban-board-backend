@@ -14,6 +14,7 @@
 
 import logging
 from typing import TYPE_CHECKING, Optional, Tuple
+import uuid
 
 from synapse.api.errors import AuthError, NotFoundError, StoreError
 from synapse.http.server import HttpServer
@@ -72,6 +73,7 @@ class MultiAccountServlet(RestServlet):
                 room_counts = await self.store.get_unread_event_push_actions_by_room_for_user(room_id=room_id, user_id=user["user_id"])
                 unread_count += room_counts.main_timeline.unread_count
             result.append({
+                "user_id": user["user_id"],
                 "display_name": entry_profileinfo.display_name, 
                 "avatar_url": entry_profileinfo.avatar_url,
                 "unread_count": unread_count
@@ -116,5 +118,56 @@ class MultiAccountServlet(RestServlet):
         return 201, {"status": "OK"}
 
 
+class MultiAccountLoginServlet(RestServlet):
+    """
+    GET /user/multi_account/{user_id} HTTP/1.1
+    """
+
+    PATTERNS = client_patterns(
+        "/user/multi_account/(?P<user_id>[^/]*)",
+        releases=("v3", "r0"),
+        v1=True
+    )
+    CATEGORY = "Multi account requests"
+
+    def __init__(self, hs: "HomeServer"):
+        super().__init__()
+        self._hs = hs
+        self.auth = hs.get_auth()
+        self.store = hs.get_datastores().main
+        self.handler = hs.get_account_data_handler()
+        self._push_rules_handler = hs.get_push_rules_handler()
+        self._clock = hs.get_clock()
+
+    async def on_GET(
+        self, request: SynapseRequest,
+        user_id: str
+    ) -> Tuple[int, JsonDict]:
+        requester = await self.auth.get_user_by_req(request)
+        actual_user_id = requester.user.to_string()
+        if actual_user_id == user_id:
+            raise StoreError(code=400, msg="Incorrect user")
+
+        multi_account = await self.store.get_multi_account(user_id=actual_user_id)
+        if multi_account is None:
+            raise NotFoundError("Multi account not found")
+        
+        multi_account_id = multi_account["multi_account_id"]
+        multi_account_users = await self.store.get_multi_account_info(multi_account_id)
+        users_dict = [user["user_id"] for user in multi_account_users]
+        if user_id not in users_dict:
+            raise NotFoundError("Multi account not found")
+        token = str(uuid.uuid4())
+        await self.store.add_login_token_to_user(
+            user_id=user_id, 
+            token=token, 
+            expiry_ts=self._clock.time_msec()+60000, 
+            auth_provider_id=None, 
+            auth_provider_session_id=None
+        )
+        return 200, {"login_token": token}
+
+
 def register_servlets(hs: "HomeServer", http_server: HttpServer) -> None:
+    MultiAccountLoginServlet(hs).register(http_server)
     MultiAccountServlet(hs).register(http_server)
