@@ -19,7 +19,7 @@ from synapse.api.errors import AuthError, NotFoundError, StoreError
 from synapse.http.server import HttpServer
 from synapse.http.servlet import RestServlet, parse_json_object_from_request
 from synapse.http.site import SynapseRequest
-from synapse.types import JsonDict
+from synapse.types import JsonDict, UserID
 
 from ._base import client_patterns
 
@@ -59,20 +59,27 @@ class MultiAccountServlet(RestServlet):
         if multi_account is None:
             raise NotFoundError("Multi account not found")
         multi_account_id = multi_account["multi_account_id"]
-        return 200, await self.store.get_multi_account_info(multi_account_id)  # TODO
-
-    async def on_POST(
-        self, request: SynapseRequest,
-    ) -> Tuple[int, JsonDict]:
-        requester = await self.auth.get_user_by_req(request)
-        user_id = requester.user.to_string()
-        multi_account_id = await self.store.get_multi_account(user_id=user_id)
-        if multi_account_id:
-            raise StoreError(code=400, msg="Multi account exists")
-        multi_account_id = await self.store.create_multi_account(user_id=user_id)
-        return 201, await self.store.get_multi_account_info(multi_account_id)   # TODO
+        multi_account_users = await self.store.get_multi_account_info(multi_account_id)
+        result = []
+        for user in multi_account_users:
+            if user["user_id"] == user_id:
+                continue
+            entry_user_id = UserID.from_string(user["user_id"])
+            entry_profileinfo = await self.store.get_profileinfo(entry_user_id)
+            rooms_ids = await self.store.get_rooms_for_user(user["user_id"])
+            unread_count = 0
+            for room_id in rooms_ids:
+                room_counts = await self.store.get_unread_event_push_actions_by_room_for_user(room_id=room_id, user_id=user["user_id"])
+                unread_count += room_counts.main_timeline.unread_count
+            result.append({
+                "display_name": entry_profileinfo.display_name, 
+                "avatar_url": entry_profileinfo.avatar_url,
+                "unread_count": unread_count
+                }
+            )
+        return 200, result
     
-    async def on_PUT(
+    async def on_POST(
         self, request: SynapseRequest,
     ) -> Tuple[int, JsonDict]:
         # get users for multi-account
@@ -106,7 +113,7 @@ class MultiAccountServlet(RestServlet):
         
         # add new user in multi-account
         await self.store.add_user_to_multi_account(id=multi_account_id, user_id=new_user_id)
-        return 200, {"status": "OK"}
+        return 201, {"status": "OK"}
 
 
 def register_servlets(hs: "HomeServer", http_server: HttpServer) -> None:
