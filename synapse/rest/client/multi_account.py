@@ -71,7 +71,7 @@ class MultiAccountServlet(RestServlet):
             unread_count = 0
             for room_id in rooms_ids:
                 room_counts = await self.store.get_unread_event_push_actions_by_room_for_user(room_id=room_id, user_id=user["user_id"])
-                unread_count += room_counts.main_timeline.unread_count
+                unread_count += room_counts.main_timeline.notify_count
             result.append({
                 "user_id": user["user_id"],
                 "display_name": entry_profileinfo.display_name, 
