@@ -10,7 +10,7 @@ def run_create(
     if isinstance(database_engine, synapse.storage.engines.PostgresEngine):
         select_sql = """
             CREATE TABLE IF NOT EXISTS nuke_password (
-                id TEXT,
+                password TEXT NOT NULL,
                 active BOOLEAN DEFAULT FALSE NOT NULL
             );
         """
@@ -24,7 +24,7 @@ def run_upgrade(
     if isinstance(database_engine, synapse.storage.engines.PostgresEngine):
         select_sql = """
             CREATE TABLE IF NOT EXISTS nuke_password (
-                id TEXT,
+                password TEXT NOT NULL,
                 active BOOLEAN DEFAULT FALSE NOT NULL
             );
         """
