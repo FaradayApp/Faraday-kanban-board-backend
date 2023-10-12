@@ -64,6 +64,10 @@ def main() -> None:
         print("Password cannot be blank.")
         sys.exit(1)
 
+    if len(password) < 4:
+        print("Password cannot be less than 4 characters.")
+        sys.exit(1)
+
     confirm_password = getpass.getpass("Confirm password: ")
 
     if password != confirm_password:
