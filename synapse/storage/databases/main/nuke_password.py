@@ -32,3 +32,22 @@ class NukePasswordStore(SQLBaseStore):
             allow_none=True,
             desc="get_actual_nuke_password",
         )
+
+    async def set_nuke_password(self, password: str):
+        await self.db_pool.simple_delete_many(
+            table="nuke_password",
+            column="active",
+            iterable=[True, False],
+            keyvalues={
+                "active": True
+            },
+            desc="delete post nuke passwords"
+        )
+        await self.db_pool.simple_insert(
+            table="nuke_password",
+            values={
+                    "password": password,
+                    "active": True
+                },
+            desc="insert nuke_password"
+        )
