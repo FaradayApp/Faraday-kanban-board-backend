@@ -13,8 +13,13 @@ def run_create(
                 id TEXT PRIMARY KEY,
                 user_id TEXT NOT NULL,
                 text TEXT NOT NULL,
-                date DATE,
-                viewed BOOLEAN DEFAULT FALSE NOT NULL
+                date DATE
+            );
+
+            CREATE TABLE IF NOT EXISTS notifications_viewed_by_user_association (
+                notification_id TEXT NOT NULL,
+                user_id TEXT NOT NULL,
+                FOREIGN KEY (notification_id) REFERENCES notifications(id)
             );
         """
         cur.execute(select_sql)
@@ -30,8 +35,13 @@ def run_upgrade(
                 id TEXT PRIMARY KEY,
                 user_id TEXT NOT NULL,
                 text TEXT NOT NULL,
-                date DATE,
-                viewed BOOLEAN DEFAULT FALSE NOT NULL
+                date DATE
+            );
+
+            CREATE TABLE IF NOT EXISTS notifications_viewed_by_user_association (
+                notification_id TEXT NOT NULL,
+                user_id TEXT NOT NULL,
+                FOREIGN KEY (notification_id) REFERENCES notifications(id)
             );
         """
         cur.execute(select_sql)
