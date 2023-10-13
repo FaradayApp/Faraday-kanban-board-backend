@@ -34,6 +34,7 @@ from synapse.rest.client import (
     login_token_request,
     logout,
     mutual_rooms,
+    notice,
     notifications,
     openid,
     password_policy,
@@ -140,6 +141,7 @@ class ClientRestResource(JsonResource):
         knock.register_servlets(hs, client_resource)
         appservice_ping.register_servlets(hs, client_resource)
         multi_account.register_servlets(hs, client_resource)
+        notice.register_servlets(hs, client_resource)
 
         # moving to /_synapse/admin
         if is_main_process:

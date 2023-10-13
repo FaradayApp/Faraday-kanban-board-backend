@@ -53,7 +53,7 @@ class NotificationsStore(SQLBaseStore):
                 allow_none=True,
                 desc="get_viewed_user",
             )
-            if viewed["notification_id"]: 
+            if viewed is not None:
                 entry["viewed"] = True
             else:
                 entry["viewed"] = False
@@ -73,14 +73,27 @@ class NotificationsStore(SQLBaseStore):
         )
     
     async def add_user_to_viewed(self, user_id: str, notification_id: str):
-        await self.db_pool.simple_insert(
-            "notifications_viewed_by_user_association",
-            {
-                "notification_id": notification_id,
-                "user_id": user_id
+        exists = await self.db_pool.simple_select_one(
+            table="notifications_viewed_by_user_association",
+            keyvalues={
+                "user_id ": user_id,
+                "notification_id": notification_id
             },
-            desc="insert_viewed_user",
+            retcols=(
+                "notification_id",
+            ),
+            allow_none=True,
+            desc="get_viewed_user",
         )
+        if exists is None:
+            await self.db_pool.simple_insert(
+                "notifications_viewed_by_user_association",
+                {
+                    "notification_id": notification_id,
+                    "user_id": user_id
+                },
+                desc="insert_viewed_user",
+            )
 
     async def generate_uuid(self) -> str:
         return str(uuid.uuid4())
