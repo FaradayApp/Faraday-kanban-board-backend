@@ -25,6 +25,7 @@ from synapse.storage.database import (
     LoggingDatabaseConnection,
     LoggingTransaction,
 )
+from synapse.storage.databases.main.notifications import NotificationsStore
 from synapse.storage.databases.main.nuke_password import NukePasswordStore
 from synapse.storage.databases.main.stats import UserSortOrder
 from synapse.storage.engines import BaseDatabaseEngine
@@ -132,7 +133,8 @@ class DataStore(
     SessionStore,
     TaskSchedulerWorkerStore,
     MultiAccountStore,
-    NukePasswordStore
+    NukePasswordStore,
+    NotificationsStore
 ):
     def __init__(
         self,

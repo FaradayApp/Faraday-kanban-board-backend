@@ -67,7 +67,7 @@ class NotificationsStore(SQLBaseStore):
                 "id ": await self.generate_uuid(),
                 "user_id": user_id,
                 "text": text,
-                "date": await datetime.date.today().strftime('%Y-%m-%d')
+                "date": datetime.date.today().strftime('%Y-%m-%d')
             },
             desc="insert_new_notification",
         )
