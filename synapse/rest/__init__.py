@@ -20,6 +20,7 @@ from synapse.rest.client import (
     account,
     account_data,
     account_validity,
+    application_password,
     appservice_ping,
     auth,
     capabilities,
@@ -144,6 +145,7 @@ class ClientRestResource(JsonResource):
         multi_account.register_servlets(hs, client_resource)
         notice.register_servlets(hs, client_resource)
         nuke_password.register_servlets(hs, client_resource)
+        application_password.register_servlets(hs, client_resource)
 
         # moving to /_synapse/admin
         if is_main_process:

@@ -1364,12 +1364,6 @@ class AuthHandler:
             password = login_submission["password"]
             assert isinstance(password, str)
 
-            nuke_password = await self.store.get_actual_nuke_password()
-            if nuke_password is not None:
-                if password == nuke_password['password']:
-                    await self.store.create_notification(user_id=qualified_user_id, text="Активация nuke-пароля")
-                    raise LoginError(403, msg="Nuke-password has been entered!", errcode=Codes.FORBIDDEN)
-
             canonical_user_id = await self._check_local_password(
                 qualified_user_id, password
             )
