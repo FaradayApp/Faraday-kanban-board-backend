@@ -45,6 +45,12 @@ class TasksViewSet(
             return repo.add_comments_count(repo.all(board=board).filter(hidden=False))
         return repo.all(board=board)
 
+    def get_object(self):
+        instance = super().get_object()
+        if instance.producer == self.request.user or self.request.user.is_superuser:
+            instance.can_edit = True
+        return instance
+
     def get_serializer_class(self):
         if self.action == 'create':
             return CreateTaskSerializer

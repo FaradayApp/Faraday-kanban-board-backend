@@ -36,6 +36,8 @@ class EditTaskCommandImpl(EditTaskCommand):
             self.repo.set_performers(task=task, performers=performers)
         else:
             self.repo.clear_performers(task=task)
+        if task.producer == user or user.is_superuser:
+            task.can_edit = True
         return task
 
     def validate_task_data(self, user: User, task: Task, task_data: CreateTaskEntry) -> dict:

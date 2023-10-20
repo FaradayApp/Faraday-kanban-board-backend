@@ -36,6 +36,7 @@ class EditTaskSerializer(serializers.Serializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     producer = UserSerializer(many=False, read_only=True)
+    can_edit = serializers.BooleanField(read_only=True, default=False)
     performers = UserSerializer(many=True, read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
 
@@ -49,6 +50,7 @@ class TaskSerializer(serializers.ModelSerializer):
             'status',
             'priority',
             'producer',
+            'can_edit',
             'performers',
             'description',
             'comments',

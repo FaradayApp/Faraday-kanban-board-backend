@@ -30,6 +30,7 @@ class RestoreTaskCommandImpl(RestoreTaskCommand):
         self.validate_board(board=board, task=task)
         if task.producer == user or user.is_superuser:
             self.repo.restore(task)
+            task.can_edit = True
             return task
         else:
             raise exceptions.CustomException('Permission denied')

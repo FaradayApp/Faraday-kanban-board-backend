@@ -28,4 +28,5 @@ class CreateTaskCommandImpl(CreateTaskCommand):
         task = self.repo.create(user=user, board=board, task_data=task_data)
         performers = self.user_repo.get_users_by_ids(ids=task_data.performers)
         self.repo.set_performers(task=task, performers=performers)
+        task.can_edit = True
         return task
