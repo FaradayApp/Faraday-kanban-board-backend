@@ -1,5 +1,8 @@
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.fields import empty
 from dependency_injector.wiring import Provide, inject
 from drf_spectacular.utils import extend_schema
 from django_filters.rest_framework import DjangoFilterBackend
@@ -9,8 +12,10 @@ from kanban_board.filters import TasksFilter
 from kanban_board.serializers.tasks import CreateTaskSerializer, EditTaskSerializer, TaskSerializer, PreviewTaskSerializer
 from kanban_board.services.board.repo import KanbanBoardRepo
 from kanban_board.services.tasks.create_task import CreateTaskCommand
+from kanban_board.services.tasks.delete_task import DeleteTaskCommand
 from kanban_board.services.tasks.edit_task import EditTaskCommand
 from kanban_board.services.tasks.repo import TaskRepo
+from kanban_board.services.tasks.restore_task import RestoreTaskCommand
 
 from utils.mixins import CustomCreateModelMixin, CustomUpdateModelMixin
 from utils import pagination
@@ -21,6 +26,7 @@ class TasksViewSet(
     CustomUpdateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
     GenericViewSet
 ):
     pagination_class = pagination.DefaultPagination
@@ -36,7 +42,7 @@ class TasksViewSet(
         board = board_repo.get_board_by_uuid(uuid=self.kwargs.get('board_uuid'))
         board_repo.check_user_in_board(board=board, user=self.request.user)
         if self.action == 'list':
-            return repo.add_comments_count(repo.all(board=board))
+            return repo.add_comments_count(repo.all(board=board).filter(hidden=False))
         return repo.all(board=board)
 
     def get_serializer_class(self):
@@ -124,3 +130,50 @@ class TasksViewSet(
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        responses=status.HTTP_204_NO_CONTENT,
+        description="""
+            Метод для удаления задачи
+        """
+    )
+    def destroy(self, request, *args, **kwargs):
+        self.perform_destroy()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @inject
+    def perform_destroy(
+        self,
+        service: DeleteTaskCommand = Provide[Container.delete_task]
+    ):
+        service(
+            user=self.request.user,
+            task=self.get_object(),
+            board_uuid=self.kwargs.get('board_uuid')
+        )
+
+    @extend_schema(
+        request=empty,
+        responses={status.HTTP_201_CREATED: TaskSerializer},
+        description="""
+            Метод для отмены удаления задачи.
+            Возвращает подробную информацию о задаче.
+        """
+    )
+    @action(detail=True, methods=['post',])
+    @inject
+    def restore(
+        self,
+        request, 
+        pk=None, 
+        board_uuid=None,
+        service: RestoreTaskCommand = Provide[Container.restore_task],
+        *args, 
+        **kwargs
+    ):
+        task = service(
+            user=request.user,
+            task_id=pk,
+            board_uuid=board_uuid
+        )
+        return Response(status=status.HTTP_201_CREATED, data=TaskSerializer(task).data)

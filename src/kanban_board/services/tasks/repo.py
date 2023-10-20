@@ -34,3 +34,9 @@ class TaskRepo(ABC):
 
     @abstractmethod
     def clear_performers(self, task: Task) -> None: ...
+
+    @abstractmethod
+    def hide(self, task: Task) -> None: ...
+
+    @abstractmethod
+    def restore(self, task: Task) -> None: ...

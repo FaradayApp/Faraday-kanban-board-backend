@@ -8,7 +8,9 @@ from kanban_board.services.board.edit_board import EditKanbanBoardCommandImpl
 from kanban_board.services.comments.create_comment import CreateCommentCommandImpl
 from kanban_board.services.comments.edit_comment import EditCommentCommandImpl
 from kanban_board.services.tasks.create_task import CreateTaskCommandImpl
+from kanban_board.services.tasks.delete_task import DeleteTaskCommandImpl
 from kanban_board.services.tasks.edit_task import EditTaskCommandImpl
+from kanban_board.services.tasks.restore_task import RestoreTaskCommandImpl
 
 from users.repo.token import TokenRepoImpl
 from users.repo.user import UserRepoImpl
@@ -65,6 +67,16 @@ class Container(containers.DeclarativeContainer):
         user_repo=user_repo,
         board_repo=board_repo
     )
+    delete_task = providers.Singleton(
+        DeleteTaskCommandImpl,
+        repo=task_repo,
+        board_repo=board_repo
+    )
+    restore_task = providers.Singleton(
+        RestoreTaskCommandImpl,
+        repo=task_repo,
+        board_repo=board_repo
+    )
 
     #comments
     comments_repo =  providers.Singleton(CommentsRepoImpl)
@@ -78,4 +90,3 @@ class Container(containers.DeclarativeContainer):
         EditCommentCommandImpl,
         repo=comments_repo
     )
-

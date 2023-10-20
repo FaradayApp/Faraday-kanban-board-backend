@@ -40,3 +40,11 @@ class TaskRepoImpl(TaskRepo):
     
     def clear_performers(self, task: Task) -> None:
         task.performers.clear()
+
+    def hide(self, task: Task) -> None:
+        task.hidden = True
+        task.save()
+
+    def restore(self, task: Task) -> None:
+        task.hidden = False
+        task.save()

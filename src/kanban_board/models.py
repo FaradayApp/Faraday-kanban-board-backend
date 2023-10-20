@@ -32,6 +32,7 @@ class Task(models.Model):
     expiration_date = models.DateField()
     producer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='produced_tasks')
     performers = models.ManyToManyField(User, related_name='tasks')
+    hidden = models.BooleanField("hidden", default=False)
     status = models.IntegerField(
         choices=TaskStatusTypes.choices,
         default=TaskStatusTypes.TO_DO
